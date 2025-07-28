@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        #container{
+            height: 50vh;
+            background-color: greenyellow;
+            border-radius: 20px;
+            overflow: hidden;
+            position: relative;
+
+        }
+        #road{
+            height: 50px;
+            width: 100%;
+            background-color: brown;
+            position: absolute;
+            bottom: 0;           
+        }
+        #dino{
+            width: 50px;
+            height: 50px;
+            background-color: rgb(235, 141, 141);
+            position: absolute;
+            bottom: 50px;
+            left: 20px;           
+        }
+        #obs{
+            width: 20px;
+            height: 50px;
+            background-color: red;
+            position: absolute;
+            bottom: 50px;
+            right: 20px;
+        }
+
+        .obs-move{
+            animation-name: myoverright;
+            animation-duration: 5s;
+            animation-iteration-count: infinite;
+            animation-timing-function: linear;
+        }
+        @keyframes myoverright {
+            from{
+                right: 20px;
+            }
+           to{
+            right: 100%;
+           }
+        }
+        .jump{
+            animation-name: jump;
+            animation-duration: 1s;
+            animation-iteration-count: 110;
+            animation-timing-function: ease-in-out;
+        }
+        @keyframes jump{
+            from{
+                bottom: 50px;
+            }
+            to{
+                bottom: 200px;
+            }
+        }
+    </style>
+</head>
+<body>
+   <div id="container">
+    <div id="dino" class="jump">Dino</div>
+    <div id="obs" class="obs-move">obj</div>
+    <div id="road">Road</div>
+
+   </div> 
+</body>
+</html>
