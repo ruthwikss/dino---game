@@ -1,78 +1,167 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-    <style>
-        #container{
-            height: 50vh;
-            background-color: greenyellow;
-            border-radius: 20px;
-            overflow: hidden;
-            position: relative;
+  <meta charset="UTF-8">
+  <title>Dino Game</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background-color: #f7f1e1; /* Desert style */
+      overflow: hidden;
+    }
 
-        }
-        #road{
-            height: 50px;
-            width: 100%;
-            background-color: brown;
-            position: absolute;
-            bottom: 0;           
-        }
-        #dino{
-            width: 50px;
-            height: 50px;
-            background-color: rgb(235, 141, 141);
-            position: absolute;
-            bottom: 50px;
-            left: 20px;           
-        }
-        #obs{
-            width: 20px;
-            height: 50px;
-            background-color: red;
-            position: absolute;
-            bottom: 50px;
-            right: 20px;
-        }
+    #game {
+      width: 100%;
+      height: 300px;
+      background: linear-gradient(#fdf6e3, #f1e3c6);
+      border-bottom: 15px solid #8b4513;
+      position: relative;
+      overflow: hidden;
+    }
 
-        .obs-move{
-            animation-name: myoverright;
-            animation-duration: 5s;
-            animation-iteration-count: infinite;
-            animation-timing-function: linear;
-        }
-        @keyframes myoverright {
-            from{
-                right: 20px;
-            }
-           to{
-            right: 100%;
-           }
-        }
-        .jump{
-            animation-name: jump;
-            animation-duration: 1s;
-            animation-iteration-count: 110;
-            animation-timing-function: ease-in-out;
-        }
-        @keyframes jump{
-            from{
-                bottom: 50px;
-            }
-            to{
-                bottom: 200px;
-            }
-        }
-    </style>
+    #dino {
+      width: 60px;
+      height: 60px;
+      background-color: green;
+      position: absolute;
+      bottom: 15px;
+      left: 80px;
+      border-radius: 5px;
+    }
+
+    #obstacle {
+      width: 30px;
+      height: 60px;
+      background-color: gray;
+      position: absolute;
+      bottom: 15px;
+      left: 100%;
+      border-radius: 4px;
+    }
+
+    #score {
+      font-size: 24px;
+      position: absolute;
+      right: 20px;
+      top: 15px;
+      color: #333;
+      font-weight: bold;
+    }
+
+    #gameOver {
+      display: none;
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      background: #fff8dc;
+      border: 3px dashed red;
+      padding: 25px 40px;
+      font-size: 22px;
+      font-weight: bold;
+      color: red;
+      text-align: center;
+      border-radius: 10px;
+    }
+
+    button {
+      padding: 10px 20px;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      font-size: 16px;
+      border-radius: 5px;
+      cursor: pointer;
+      margin-top: 15px;
+    }
+
+    button:hover {
+      background-color: #45a049;
+    }
+  </style>
 </head>
 <body>
-   <div id="container">
-    <div id="dino" class="jump">Dino</div>
-    <div id="obs" class="obs-move">obj</div>
-    <div id="road">Road</div>
 
-   </div> 
+<div id="game">
+  <div id="dino"></div>
+  <div id="obstacle"></div>
+  <div id="score">Score: 0</div>
+  <div id="gameOver">
+    💥 Game Over!<br>
+    <span id="finalScore"></span><br>
+    <button onclick="restart()">Play Again 🔄</button>
+  </div>
+</div>
+
+<script>
+  const dino = document.getElementById("dino");
+  const obstacle = document.getElementById("obstacle");
+  const scoreText = document.getElementById("score");
+  const gameOver = document.getElementById("gameOver");
+  const finalScore = document.getElementById("finalScore");
+
+  let isJumping = false;
+  let score = 0;
+  let gameInterval;
+
+  document.addEventListener("keydown", () => {
+    if (!isJumping) jump();
+  });
+
+  function jump() {
+    isJumping = true;
+    let up = 0;
+    const upInterval = setInterval(() => {
+      if (up >= 150) {
+        clearInterval(upInterval);
+        const downInterval = setInterval(() => {
+          if (up <= 0) {
+            clearInterval(downInterval);
+            isJumping = false;
+          }
+          up -= 5;
+          dino.style.bottom = 15 + up + "px";
+        }, 20);
+      } else {
+        up += 5;
+        dino.style.bottom = 15 + up + "px";
+      }
+    }, 20);
+  }
+
+  function startGame() {
+    obstacle.style.left = "100%";
+    score = 0;
+    gameInterval = setInterval(() => {
+      let obstacleLeft = parseInt(getComputedStyle(obstacle).left);
+      let dinoBottom = parseInt(getComputedStyle(dino).bottom);
+
+      if (obstacleLeft <= 140 && obstacleLeft >= 80 && dinoBottom <= 60) {
+        clearInterval(gameInterval);
+        gameOver.style.display = "block";
+        finalScore.innerText = `Final Score: ${score}`;
+        return;
+      }
+
+      if (obstacleLeft <= -30) {
+        obstacle.style.left = "100%";
+        score += 1;
+        scoreText.innerText = `Score: ${score}`;
+      } else {
+        obstacle.style.left = obstacleLeft - 10 + "px";
+      }
+    }, 30);
+  }
+
+  function restart() {
+    gameOver.style.display = "none";
+    scoreText.innerText = "Score: 0";
+    startGame();
+  }
+
+  startGame();
+</script>
+
 </body>
 </html>
